@@ -1,0 +1,262 @@
+---
+title: Reference
+---
+
+Communicators
+-------------
+
+`mpi.comm_world`
+
+  : Predefined communicator that contains all processes.
+
+`comm:rank()`
+
+  : Returns the rank of the process.
+
+`comm:size()`
+
+  : Returns the number of processes.
+
+
+Point-to-point communication
+----------------------------
+
+`mpi.send(buf, count, datatype, dest, tag, comm)`
+
+  : Performs a blocking send. A block of `count` elements with datatype
+    `datatype` is read from `buf` and sent to the process with rank `dest`;
+    unless `dest` is **nil**, in which case no send is performed. `tag` is
+    a non-negative integer that identifies the message.
+
+`mpi.recv(buf, count, datatype, source, tag, comm)`
+
+  : Performs a blocking receive. A block of `count` elements with datatype
+    `datatype` is received from the process with rank `source` and stored
+    in `buf`; unless `source` is **nil**, in which case no receive is
+    performed. `tag` is a non-negative integer that identifies the message.
+
+`mpi.sendrecv(sendbuf, sendcount, sendtype, dest, sendtag, recvbuf, recvcount, recvtype, source, recvtag, comm)`
+
+  : Performs a blocking send and receive. A block of `sendcount` elements
+    with datatype `sendtype` is read from `sendbuf` and sent to the process
+    with rank `dest`; unless `dest` is **nil**, in which case no send is
+    performed. `sendtag` is a non-negative integer that identifies the
+    sent message. A block of `recvcount` elements with datatype `recvtype`
+    is received from the process with rank `source` and stored in `recvbuf`;
+    unless `source` is **nil**, in which case no receive is performed.
+    `recvtag` is a non-negative integer that identifies the received message.
+
+`mpi.sendrecv_replace(buf, count, datatype, dest, sendtag, source, recvtag, comm)`
+
+  : Performs a blocking in-place send and receive. A block of `count`
+    elements with datatype `datatype` is read from `buf` and sent to the
+    process with rank `dest`; unless `dest` is **nil**, in which case no
+    send is performed. `sendtag` is a non-negative integer that identifies
+    the sent message. A block of `count` elements with datatype `datatype`
+    is received from the process with rank `source` and stored in `buf`;
+    unless `source` is **nil**, in which case no receive is performed.
+
+
+Collective communication
+------------------------
+
+`mpi.barrier(comm)`
+
+  : Blocks the calling process until all processes have called the function.
+
+`mpi.bcast(buf, count, datatype, root, comm)`
+
+  : Performs a broadcast operation. For each rank *i* in the communicator
+    `comm`, the process with rank `root` sends a block of `count` elements
+    with datatype `datatype` in `buf` to the process with rank *i*, which
+    stores the values in `buf`.
+
+`mpi.gather(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, root, comm)`
+
+  : Performs a gather operation. For each rank *i* in the communicator
+    `comm`, the process with rank *i* sends a block of `sendcount` elements
+    with datatype `sendtype` in `sendbuf` to the process with rank `root`,
+    which stores the values in the *i*-th block of `recvcount` elements
+    with datatype `recvtype` in `recvbuf`.
+
+`mpi.gatherv(sendbuf, sendcount, sendtype, recvbuf, recvcounts, displs, recvtype, root, comm)`
+
+  : Performs a gather operation with varying block sizes. For each rank *i*
+    in the communicator `comm`, the process with rank *i* sends a block of
+    `sendcount` elements with datatype `sendtype` in `sendbuf` to the process
+    with rank `root`, which stores the values in a block of `recvcounts[i]`
+    elements at offset `displs[i]` with datatype `recvtype` in `recvbuf`.
+
+`mpi.scatter(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, root, comm)`
+
+  : Performs a scatter operation. For each rank *i* in the communicator
+    `comm`, the process with rank `root` sends the *i*-th block of
+    `sendcount` elements of datatype `sendtype` in `sendbuf` to the process
+    with rank *i*, which stores the values in a block of `recvcount`
+    elements with datatype `recvtype` in `recvbuf`.
+
+`mpi.scatterv(sendbuf, sendcounts, displs, sendtype, recvbuf, recvcount, recvtype, root, comm)`
+
+  : Performs a scatter operation with varying block sizes. For each rank *i*
+    in the communicator `comm`, the process with rank `root` sends a block
+    of `sendcounts[i]` elements at offset `displs[i]` with datatype `sendtype`
+    in `sendbuf` to the process with rank *i*, which stores the values in
+    a block of `recvcount` elements with datatype `recvtype` in `recvbuf`.
+
+`mpi.allgather(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm)`
+
+  : Performs a gather-to-all operation. For each pair of ranks *i* and *j*
+    in the communicator `comm`, the process with rank *i* sends a block of
+    `sendcount` elements with datatype `sendtype` in `sendbuf` to the
+    process with rank *j*, which stores the values in the *i*-th block of
+    `recvcount` elements with datatype `recvtype` in `recvbuf`.
+
+`mpi.allgatherv(sendbuf, sendcount, sendtype, recvbuf, recvcounts, displs, recvtype, comm)`
+
+  : Performs a gather-to-all operation with varying block sizes. For each
+    pair of ranks *i* and *j* in the communicator `comm`, the process with
+    rank *i* sends a block of `sendcount` elements with datatype `sendtype`
+    in `sendbuf` to the process with rank *j*, which stores the values in a
+    block of `recvcounts[i]` elements at offset `displs[i]` with datatype
+    `recvtype` in `recvbuf`.
+
+`mpi.alltoall(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm)`
+
+  : Performs an all-to-all scatter/gather operation. For each pair of ranks
+    *i* and *j* in the communicator `comm`, the process with rank *i* sends
+    the *j*-th block of `sendcount` elements with datatype `sendtype` in
+    `sendbuf` to the process with rank *j*, which stores the values in the
+    *i*-th block of `recvcount` elements with datatype `recvtype` in `recvbuf`.
+
+`mpi.alltoallv(sendbuf, sendcounts, sdispls, sendtype, recvbuf, recvcounts, rdispls, recvtype, comm)`
+
+  : Performs an all-to-all scatter/gather operation with varying block sizes.
+    For each pair of rank *i* and *j* in the communicator `comm`, the process
+    with rank *i* sends a block of `sendcounts[j]` elements at offset
+    `sdispls[j]` with datatype `sendtype` in `sendbuf` to the process with
+    rank *j*, which stores the values in a block of `recvcounts[i]` elements
+    at offset `rdispls[i]` with datatype `recvtype` in `recvbuf`.
+
+`mpi.reduce(sendbuf, recvbuf, count, datatype, op, root, comm)`
+
+  : Performs a reduce operation. Blocks of `count` elements with datatype
+    `datatype` in `sendbuf` of all processes in the communicator `comm` are
+    combined element-wise using the reduction operator `op`, and the result
+    is stored in a block of `count` elements with datatype `datatype` in
+    `recvbuf` of the process with rank `root`.
+
+`mpi.allreduce(sendbuf, recvbuf, count, datatype, op, comm)`
+
+  : Performs a reduce-to-all operation. Blocks of `count` elements with
+    datatype `datatype` in `sendbuf` of all processes in the communicator
+    `comm` are combined element-wise using the reduction operator `op`, and
+    the result is stored in a block of `count` elements with datatype
+    `datatype` in `recvbuf` of all processes.
+
+`mpi.scan(sendbuf, recvbuf, count, datatype, op, comm)`
+
+  : Performs an inclusive scan operation. For each rank *i* in the
+    communicator `comm`, blocks of `count` elements with datatype
+    `datatype` in `sendbuf` of the processes with ranks 0 to *i* are
+    combined element-wise using the reduction operator `op`, and the result
+    is stored in a block of `count` elements with datatype `datatype` in
+    `recvbuf` of the process with rank *i*.
+
+`mpi.exscan(sendbuf, recvbuf, count, datatype, op, comm)`
+
+  : Performs an exclusive scan operation. For each rank *i* in the
+    communicator `comm`, blocks of `count` elements with datatype
+    `datatype` in `sendbuf` of the processes with ranks *0* to *i - 1* are
+    combined element-wise using the reduction operator `op`, and the result
+    is stored in a block of `count` elements with datatype `datatype` in
+    `recvbuf` of the process with rank *i*.
+
+
+### Predefined reduction operators
+
++------------------------------------+------------------------------------+
+| `mpi.max`                          | `mpi.maxloc`                       |
+|   : Maximum                        |   : Maximum and location           |
+|                                    |                                    |
+| `mpi.min`                          | `mpi.minloc`                       |
+|   : Minimum                        |   : Minimum and location           |
+|                                    |                                    |
+| `mpi.sum`                          | `mpi.prod`                         |
+|   : Sum                            |   : Product                        |
+|                                    |                                    |
+| `mpi.land`                         | `mpi.band`                         |
+|   : Logical and                    |   : Bit-wise and                   |
+|                                    |                                    |
+| `mpi.lor`                          | `mpi.bor`                          |
+|   : Logical or                     |   : Bit-wise or                    |
+|                                    |                                    |
+| `mpi.lxor`                         | `mpi.bxor`                         |
+|   : Logical exclusive or           |   : Bit-wise exclusive or          |
++------------------------------------+------------------------------------+
+
+
+Datatypes
+---------
+
+### Predefined datatypes
+
++------------------------------------+------------------------------------+
+| `mpi.char`                         | `mpi.wchar`                        |
+|   : C type `char`                  |   : C type `wchar_t`               |
+|                                    |                                    |
+| `mpi.schar`                        | `mpi.uchar`                        |
+|   : C type `signed char`           |   : C type `unsigned char`         |
+|                                    |                                    |
+| `mpi.short`                        | `mpi.ushort`                       |
+|   : C type `short`                 |   : C type `unsigned short`        |
+|                                    |                                    |
+| `mpi.int`                          | `mpi.uint`                         |
+|   : C type `int`                   |   : C type `unsigned int`          |
+|                                    |                                    |
+| `mpi.long`                         | `mpi.ulong`                        |
+|   : C type `long`                  |   : C type `unsigned long`         |
+|                                    |                                    |
+| `mpi.llong`                        | `mpi.ullong`                       |
+|   : C type `long long`             |   : C type `unsigned long long`    |
++------------------------------------+------------------------------------+
+
++------------------------------------+------------------------------------+
+| `mpi.float`                        | `mpi.double`                       |
+|   : C type `float`                 |   : C type `double`                |
++------------------------------------+------------------------------------+
+
++------------------------------------+------------------------------------+
+| `mpi.byte`                         | `mpi.packed`                       |
+|   : Binary data                    |   : Packed data                    |
++------------------------------------+------------------------------------+
+
+*The following datatypes are available with MPI-2.2 or later.*
+
++------------------------------------+------------------------------------+
+| `mpi.bool`                         |                                    |
+|   : C type `bool`                  |                                    |
++------------------------------------+------------------------------------+
+
++------------------------------------+------------------------------------+
+| `mpi.int8`                         | `mpi.uint8`                        |
+|   : C type `int8_t`                |   : C type `uint8_t`               |
+|                                    |                                    |
+| `mpi.int16`                        | `mpi.uint16`                       |
+|   : C type `int16_t`               |   : C type `uint16_t`              |
+|                                    |                                    |
+| `mpi.int32`                        | `mpi.uint32`                       |
+|   : C type `int32_t`               |   : C type `uint32_t`              |
+|                                    |                                    |
+| `mpi.int64`                        | `mpi.uint64`                       |
+|   : C type `int64_t`               |   : C type `uint64_t`              |
++------------------------------------+------------------------------------+
+
++------------------------------------+------------------------------------+
+| `mpi.fcomplex`                     | `mpi.dcomplex`                     |
+|   : C type `float complex`         |   : C type `double complex`        |
++------------------------------------+------------------------------------+
+
++------------------------------------+------------------------------------+
+| `mpi.aint`                         | `mpi.offset`                       |
+|   : C type `MPI_Aint`              |   : C type `MPI_Offset`            |
++------------------------------------+------------------------------------+

@@ -1,0 +1,349 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Peter Colberg" />
+  <title>Reference &mdash; MPI for Lua</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="pandoc.css" type="text/css" />
+</head>
+<body>
+<div class="header">
+<ul>
+<li><a href="index.html">MPI for Lua</a></li>
+<li><a href="INSTALL.html">Installing</a></li>
+<li><a href="README.html">User's Guide</a></li>
+<li><a href="reference.html">Reference</a></li>
+<li><a href="https://lists.colberg.org/listinfo/lua-mpi">Mailing list</a></li>
+<li><a href="CHANGES.html">Releases</a></li>
+</ul>
+</div>
+<div class="body">
+<h1>Reference</h1>
+<div class="toc">
+<ul>
+<li><a href="#communicators">Communicators</a></li>
+<li><a href="#point-to-point-communication">Point-to-point communication</a></li>
+<li><a href="#collective-communication">Collective communication</a></li>
+<li><a href="#datatypes">Datatypes</a></li>
+</ul>
+</div>
+<h2 id="communicators">Communicators</h2>
+<dl>
+<dt><code>mpi.comm_world</code></dt>
+<dd><p>Predefined communicator that contains all processes.</p>
+</dd>
+<dt><code>comm:rank()</code></dt>
+<dd><p>Returns the rank of the process.</p>
+</dd>
+<dt><code>comm:size()</code></dt>
+<dd><p>Returns the number of processes.</p>
+</dd>
+</dl>
+<h2 id="point-to-point-communication">Point-to-point communication</h2>
+<dl>
+<dt><code>mpi.send(buf, count, datatype, dest, tag, comm)</code></dt>
+<dd><p>Performs a blocking send. A block of <code>count</code> elements with datatype <code>datatype</code> is read from <code>buf</code> and sent to the process with rank <code>dest</code>; unless <code>dest</code> is <strong>nil</strong>, in which case no send is performed. <code>tag</code> is a non-negative integer that identifies the message.</p>
+</dd>
+<dt><code>mpi.recv(buf, count, datatype, source, tag, comm)</code></dt>
+<dd><p>Performs a blocking receive. A block of <code>count</code> elements with datatype <code>datatype</code> is received from the process with rank <code>source</code> and stored in <code>buf</code>; unless <code>source</code> is <strong>nil</strong>, in which case no receive is performed. <code>tag</code> is a non-negative integer that identifies the message.</p>
+</dd>
+<dt><code>mpi.sendrecv(sendbuf, sendcount, sendtype, dest, sendtag, recvbuf, recvcount, recvtype, source, recvtag, comm)</code></dt>
+<dd><p>Performs a blocking send and receive. A block of <code>sendcount</code> elements with datatype <code>sendtype</code> is read from <code>sendbuf</code> and sent to the process with rank <code>dest</code>; unless <code>dest</code> is <strong>nil</strong>, in which case no send is performed. <code>sendtag</code> is a non-negative integer that identifies the sent message. A block of <code>recvcount</code> elements with datatype <code>recvtype</code> is received from the process with rank <code>source</code> and stored in <code>recvbuf</code>; unless <code>source</code> is <strong>nil</strong>, in which case no receive is performed. <code>recvtag</code> is a non-negative integer that identifies the received message.</p>
+</dd>
+<dt><code>mpi.sendrecv_replace(buf, count, datatype, dest, sendtag, source, recvtag, comm)</code></dt>
+<dd><p>Performs a blocking in-place send and receive. A block of <code>count</code> elements with datatype <code>datatype</code> is read from <code>buf</code> and sent to the process with rank <code>dest</code>; unless <code>dest</code> is <strong>nil</strong>, in which case no send is performed. <code>sendtag</code> is a non-negative integer that identifies the sent message. A block of <code>count</code> elements with datatype <code>datatype</code> is received from the process with rank <code>source</code> and stored in <code>buf</code>; unless <code>source</code> is <strong>nil</strong>, in which case no receive is performed.</p>
+</dd>
+</dl>
+<h2 id="collective-communication">Collective communication</h2>
+<dl>
+<dt><code>mpi.barrier(comm)</code></dt>
+<dd><p>Blocks the calling process until all processes have called the function.</p>
+</dd>
+<dt><code>mpi.bcast(buf, count, datatype, root, comm)</code></dt>
+<dd><p>Performs a broadcast operation. For each rank <em>i</em> in the communicator <code>comm</code>, the process with rank <code>root</code> sends a block of <code>count</code> elements with datatype <code>datatype</code> in <code>buf</code> to the process with rank <em>i</em>, which stores the values in <code>buf</code>.</p>
+</dd>
+<dt><code>mpi.gather(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, root, comm)</code></dt>
+<dd><p>Performs a gather operation. For each rank <em>i</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <code>root</code>, which stores the values in the <em>i</em>-th block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+</dd>
+<dt><code>mpi.gatherv(sendbuf, sendcount, sendtype, recvbuf, recvcounts, displs, recvtype, root, comm)</code></dt>
+<dd><p>Performs a gather operation with varying block sizes. For each rank <em>i</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <code>root</code>, which stores the values in a block of <code>recvcounts[i]</code> elements at offset <code>displs[i]</code> with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+</dd>
+<dt><code>mpi.scatter(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, root, comm)</code></dt>
+<dd><p>Performs a scatter operation. For each rank <em>i</em> in the communicator <code>comm</code>, the process with rank <code>root</code> sends the <em>i</em>-th block of <code>sendcount</code> elements of datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>i</em>, which stores the values in a block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+</dd>
+<dt><code>mpi.scatterv(sendbuf, sendcounts, displs, sendtype, recvbuf, recvcount, recvtype, root, comm)</code></dt>
+<dd><p>Performs a scatter operation with varying block sizes. For each rank <em>i</em> in the communicator <code>comm</code>, the process with rank <code>root</code> sends a block of <code>sendcounts[i]</code> elements at offset <code>displs[i]</code> with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>i</em>, which stores the values in a block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+</dd>
+<dt><code>mpi.allgather(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm)</code></dt>
+<dd><p>Performs a gather-to-all operation. For each pair of ranks <em>i</em> and <em>j</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>j</em>, which stores the values in the <em>i</em>-th block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+</dd>
+<dt><code>mpi.allgatherv(sendbuf, sendcount, sendtype, recvbuf, recvcounts, displs, recvtype, comm)</code></dt>
+<dd><p>Performs a gather-to-all operation with varying block sizes. For each pair of ranks <em>i</em> and <em>j</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>j</em>, which stores the values in a block of <code>recvcounts[i]</code> elements at offset <code>displs[i]</code> with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+</dd>
+<dt><code>mpi.alltoall(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm)</code></dt>
+<dd><p>Performs an all-to-all scatter/gather operation. For each pair of ranks <em>i</em> and <em>j</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends the <em>j</em>-th block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>j</em>, which stores the values in the <em>i</em>-th block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+</dd>
+<dt><code>mpi.alltoallv(sendbuf, sendcounts, sdispls, sendtype, recvbuf, recvcounts, rdispls, recvtype, comm)</code></dt>
+<dd><p>Performs an all-to-all scatter/gather operation with varying block sizes. For each pair of rank <em>i</em> and <em>j</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcounts[j]</code> elements at offset <code>sdispls[j]</code> with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>j</em>, which stores the values in a block of <code>recvcounts[i]</code> elements at offset <code>rdispls[i]</code> with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+</dd>
+<dt><code>mpi.reduce(sendbuf, recvbuf, count, datatype, op, root, comm)</code></dt>
+<dd><p>Performs a reduce operation. Blocks of <code>count</code> elements with datatype <code>datatype</code> in <code>sendbuf</code> of all processes in the communicator <code>comm</code> are combined element-wise using the reduction operator <code>op</code>, and the result is stored in a block of <code>count</code> elements with datatype <code>datatype</code> in <code>recvbuf</code> of the process with rank <code>root</code>.</p>
+</dd>
+<dt><code>mpi.allreduce(sendbuf, recvbuf, count, datatype, op, comm)</code></dt>
+<dd><p>Performs a reduce-to-all operation. Blocks of <code>count</code> elements with datatype <code>datatype</code> in <code>sendbuf</code> of all processes in the communicator <code>comm</code> are combined element-wise using the reduction operator <code>op</code>, and the result is stored in a block of <code>count</code> elements with datatype <code>datatype</code> in <code>recvbuf</code> of all processes.</p>
+</dd>
+<dt><code>mpi.scan(sendbuf, recvbuf, count, datatype, op, comm)</code></dt>
+<dd><p>Performs an inclusive scan operation. For each rank <em>i</em> in the communicator <code>comm</code>, blocks of <code>count</code> elements with datatype <code>datatype</code> in <code>sendbuf</code> of the processes with ranks 0 to <em>i</em> are combined element-wise using the reduction operator <code>op</code>, and the result is stored in a block of <code>count</code> elements with datatype <code>datatype</code> in <code>recvbuf</code> of the process with rank <em>i</em>.</p>
+</dd>
+<dt><code>mpi.exscan(sendbuf, recvbuf, count, datatype, op, comm)</code></dt>
+<dd><p>Performs an exclusive scan operation. For each rank <em>i</em> in the communicator <code>comm</code>, blocks of <code>count</code> elements with datatype <code>datatype</code> in <code>sendbuf</code> of the processes with ranks <em>0</em> to <em>i - 1</em> are combined element-wise using the reduction operator <code>op</code>, and the result is stored in a block of <code>count</code> elements with datatype <code>datatype</code> in <code>recvbuf</code> of the process with rank <em>i</em>.</p>
+</dd>
+</dl>
+<h3 id="predefined-reduction-operators">Predefined reduction operators</h3>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><dl>
+<dt><code>mpi.max</code></dt>
+<dd>Maximum
+</dd>
+<dt><code>mpi.min</code></dt>
+<dd>Minimum
+</dd>
+<dt><code>mpi.sum</code></dt>
+<dd>Sum
+</dd>
+<dt><code>mpi.land</code></dt>
+<dd>Logical and
+</dd>
+<dt><code>mpi.lor</code></dt>
+<dd>Logical or
+</dd>
+<dt><code>mpi.lxor</code></dt>
+<dd>Logical exclusive or
+</dd>
+</dl></td>
+<td align="left"><dl>
+<dt><code>mpi.maxloc</code></dt>
+<dd>Maximum and location
+</dd>
+<dt><code>mpi.minloc</code></dt>
+<dd>Minimum and location
+</dd>
+<dt><code>mpi.prod</code></dt>
+<dd>Product
+</dd>
+<dt><code>mpi.band</code></dt>
+<dd>Bit-wise and
+</dd>
+<dt><code>mpi.bor</code></dt>
+<dd>Bit-wise or
+</dd>
+<dt><code>mpi.bxor</code></dt>
+<dd>Bit-wise exclusive or
+</dd>
+</dl></td>
+</tr>
+</tbody>
+</table>
+<h2 id="datatypes">Datatypes</h2>
+<h3 id="predefined-datatypes">Predefined datatypes</h3>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><dl>
+<dt><code>mpi.char</code></dt>
+<dd>C type <code>char</code>
+</dd>
+<dt><code>mpi.schar</code></dt>
+<dd>C type <code>signed char</code>
+</dd>
+<dt><code>mpi.short</code></dt>
+<dd>C type <code>short</code>
+</dd>
+<dt><code>mpi.int</code></dt>
+<dd>C type <code>int</code>
+</dd>
+<dt><code>mpi.long</code></dt>
+<dd>C type <code>long</code>
+</dd>
+<dt><code>mpi.llong</code></dt>
+<dd>C type <code>long long</code>
+</dd>
+</dl></td>
+<td align="left"><dl>
+<dt><code>mpi.wchar</code></dt>
+<dd>C type <code>wchar_t</code>
+</dd>
+<dt><code>mpi.uchar</code></dt>
+<dd>C type <code>unsigned char</code>
+</dd>
+<dt><code>mpi.ushort</code></dt>
+<dd>C type <code>unsigned short</code>
+</dd>
+<dt><code>mpi.uint</code></dt>
+<dd>C type <code>unsigned int</code>
+</dd>
+<dt><code>mpi.ulong</code></dt>
+<dd>C type <code>unsigned long</code>
+</dd>
+<dt><code>mpi.ullong</code></dt>
+<dd>C type <code>unsigned long long</code>
+</dd>
+</dl></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><dl>
+<dt><code>mpi.float</code></dt>
+<dd>C type <code>float</code>
+</dd>
+</dl></td>
+<td align="left"><dl>
+<dt><code>mpi.double</code></dt>
+<dd>C type <code>double</code>
+</dd>
+</dl></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><dl>
+<dt><code>mpi.byte</code></dt>
+<dd>Binary data
+</dd>
+</dl></td>
+<td align="left"><dl>
+<dt><code>mpi.packed</code></dt>
+<dd>Packed data
+</dd>
+</dl></td>
+</tr>
+</tbody>
+</table>
+<p><em>The following datatypes are available with MPI-2.2 or later.</em></p>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><dl>
+<dt><code>mpi.bool</code></dt>
+<dd>C type <code>bool</code>
+</dd>
+</dl></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><dl>
+<dt><code>mpi.int8</code></dt>
+<dd>C type <code>int8_t</code>
+</dd>
+<dt><code>mpi.int16</code></dt>
+<dd>C type <code>int16_t</code>
+</dd>
+<dt><code>mpi.int32</code></dt>
+<dd>C type <code>int32_t</code>
+</dd>
+<dt><code>mpi.int64</code></dt>
+<dd>C type <code>int64_t</code>
+</dd>
+</dl></td>
+<td align="left"><dl>
+<dt><code>mpi.uint8</code></dt>
+<dd>C type <code>uint8_t</code>
+</dd>
+<dt><code>mpi.uint16</code></dt>
+<dd>C type <code>uint16_t</code>
+</dd>
+<dt><code>mpi.uint32</code></dt>
+<dd>C type <code>uint32_t</code>
+</dd>
+<dt><code>mpi.uint64</code></dt>
+<dd>C type <code>uint64_t</code>
+</dd>
+</dl></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><dl>
+<dt><code>mpi.fcomplex</code></dt>
+<dd>C type <code>float complex</code>
+</dd>
+</dl></td>
+<td align="left"><dl>
+<dt><code>mpi.dcomplex</code></dt>
+<dd>C type <code>double complex</code>
+</dd>
+</dl></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><dl>
+<dt><code>mpi.aint</code></dt>
+<dd>C type <code>MPI_Aint</code>
+</dd>
+</dl></td>
+<td align="left"><dl>
+<dt><code>mpi.offset</code></dt>
+<dd>C type <code>MPI_Offset</code>
+</dd>
+</dl></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="footer">
+&copy; Copyright 2013–2014, Peter Colberg.
+Created using <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>.
+</div>
+</body>
+</html>

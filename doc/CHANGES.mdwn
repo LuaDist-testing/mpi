@@ -1,0 +1,14 @@
+---
+title: Releases
+---
+
+This document lists the changes between stable releases.
+
+The version numbers follow [semantic versioning].
+
+[semantic versioning]: http://semver.org/spec/v2.0.0.html
+
+
+## lua‑mpi 0.1 (2014-12-01) {#v0.1}
+
+  * Initial release of MPI for Lua.
