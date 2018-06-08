@@ -1,7 +1,7 @@
 #!/usr/bin/env luajit
 ------------------------------------------------------------------------------
 -- Solve 1-dimensional diffusion equation by finite differences.
--- Copyright © 2013–2014 Peter Colberg.
+-- Copyright © 2013–2015 Peter Colberg.
 -- Distributed under the MIT license. (See accompanying file LICENSE.)
 ------------------------------------------------------------------------------
 
@@ -64,4 +64,5 @@ for step = 1, nstep do
   end
 end
 
+dset:close()
 file:close()

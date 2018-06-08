@@ -9,6 +9,16 @@ The version numbers follow [semantic versioning].
 [semantic versioning]: http://semver.org/spec/v2.0.0.html
 
 
+## lua‑mpi 0.2 (2015-04-24) {#v0.2}
+
+  * Add datatypes for reduce of maximum/minimum location.
+  * Support in-place collective communication.
+  * Add Cartesian process topology.
+  * Add user-defined datatypes.
+  * Support compilation with GCC 5.
+
+Thanks to Lesley De Cruz for contributing to this release.
+
 ## lua‑mpi 0.1 (2014-12-01) {#v0.1}
 
   * Initial release of MPI for Lua.

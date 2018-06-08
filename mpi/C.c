@@ -1,6 +1,6 @@
 /*
  * MPI for Lua.
- * Copyright © 2013 Peter Colberg.
+ * Copyright © 2013–2015 Peter Colberg.
  * Distributed under the MIT license. (See accompanying file LICENSE.)
  */
 
@@ -10,10 +10,9 @@
 #include <mpi.h>
 
 #include "ffi-cdecl.h"
-#include "ffi-cdecl-luajit.h"
 
 /* C opaque types */
-cdecl_typealias(MPI_Aint, ptrdiff_t)
+cdecl_type(MPI_Aint)
 #if MPI_VERSION >= 3
 cdecl_type(MPI_Count)
 #endif

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Plot 1-dimensional density distribution.
-# Copyright © 2014 Peter Colberg.
+# Copyright © 2013–2015 Peter Colberg.
 # Distributed under the MIT license.
 #
 

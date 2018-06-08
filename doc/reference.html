@@ -28,6 +28,8 @@
 <li><a href="#point-to-point-communication">Point-to-point communication</a></li>
 <li><a href="#collective-communication">Collective communication</a></li>
 <li><a href="#datatypes">Datatypes</a></li>
+<li><a href="#process-topologies">Process topologies</a></li>
+<li><a href="#environment">Environment</a></li>
 </ul>
 </div>
 <h2 id="communicators">Communicators</h2>
@@ -67,39 +69,53 @@
 </dd>
 <dt><code>mpi.gather(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, root, comm)</code></dt>
 <dd><p>Performs a gather operation. For each rank <em>i</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <code>root</code>, which stores the values in the <em>i</em>-th block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at the process with rank <code>root</code> to perform the operation in place. In this case <code>sendcount</code> and <code>sendtype</code> are ignored, and the process does not gather elements from itself.</p>
 </dd>
 <dt><code>mpi.gatherv(sendbuf, sendcount, sendtype, recvbuf, recvcounts, displs, recvtype, root, comm)</code></dt>
 <dd><p>Performs a gather operation with varying block sizes. For each rank <em>i</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <code>root</code>, which stores the values in a block of <code>recvcounts[i]</code> elements at offset <code>displs[i]</code> with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at the process with rank <code>root</code> to perform the operation in place. In this case <code>sendcount</code> and <code>sendtype</code> are ignored, and the process does not gather elements from itself.</p>
 </dd>
 <dt><code>mpi.scatter(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, root, comm)</code></dt>
 <dd><p>Performs a scatter operation. For each rank <em>i</em> in the communicator <code>comm</code>, the process with rank <code>root</code> sends the <em>i</em>-th block of <code>sendcount</code> elements of datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>i</em>, which stores the values in a block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>recvbuf</code> at the process with rank <code>root</code> to perform the operation in place. In this case <code>recvcount</code> and <code>recvtype</code> are ignored, and the process does not scatter elements to itself.</p>
 </dd>
 <dt><code>mpi.scatterv(sendbuf, sendcounts, displs, sendtype, recvbuf, recvcount, recvtype, root, comm)</code></dt>
 <dd><p>Performs a scatter operation with varying block sizes. For each rank <em>i</em> in the communicator <code>comm</code>, the process with rank <code>root</code> sends a block of <code>sendcounts[i]</code> elements at offset <code>displs[i]</code> with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>i</em>, which stores the values in a block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>recvbuf</code> at the process with rank <code>root</code> to perform the operation in place. In this case <code>recvcount</code> and <code>recvtype</code> are ignored, and the process does not scatter elements to itself.</p>
 </dd>
 <dt><code>mpi.allgather(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm)</code></dt>
 <dd><p>Performs a gather-to-all operation. For each pair of ranks <em>i</em> and <em>j</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>j</em>, which stores the values in the <em>i</em>-th block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at all processes to perform the operation in place. In this case <code>sendcount</code> and <code>sendtype</code> are ignored, and the process with rank <em>i</em> sends the <em>i</em>-th block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code> to the process with rank <em>j</em> for each pair of different ranks <em>i</em> and <em>j</em>.</p>
 </dd>
 <dt><code>mpi.allgatherv(sendbuf, sendcount, sendtype, recvbuf, recvcounts, displs, recvtype, comm)</code></dt>
 <dd><p>Performs a gather-to-all operation with varying block sizes. For each pair of ranks <em>i</em> and <em>j</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>j</em>, which stores the values in a block of <code>recvcounts[i]</code> elements at offset <code>displs[i]</code> with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at all processes to perform the operation in place. In this case <code>sendcount</code> and <code>sendtype</code> are ignored, and the process with rank <em>i</em> sends the <em>i</em>-th block of <code>recvcounts[i]</code> elements at offset <code>displs[i]</code> with datatype <code>recvtype</code> in <code>recvbuf</code> to the process with rank <em>j</em> for each pair of different ranks <em>i</em> and <em>j</em>.</p>
 </dd>
 <dt><code>mpi.alltoall(sendbuf, sendcount, sendtype, recvbuf, recvcount, recvtype, comm)</code></dt>
 <dd><p>Performs an all-to-all scatter/gather operation. For each pair of ranks <em>i</em> and <em>j</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends the <em>j</em>-th block of <code>sendcount</code> elements with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>j</em>, which stores the values in the <em>i</em>-th block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at all processes to perform the operation in place. In this case <code>sendcount</code> and <code>sendtype</code> are ignored, and the process with rank <em>i</em> sends the <em>j</em>-th block of <code>recvcount</code> elements with datatype <code>recvtype</code> in <code>recvbuf</code> to the process with rank <em>j</em> for each pair of different ranks <em>i</em> and <em>j</em>.</p>
+<p><em>The in-place variant of this function is available with MPI-2.2</em>.</p>
 </dd>
 <dt><code>mpi.alltoallv(sendbuf, sendcounts, sdispls, sendtype, recvbuf, recvcounts, rdispls, recvtype, comm)</code></dt>
 <dd><p>Performs an all-to-all scatter/gather operation with varying block sizes. For each pair of rank <em>i</em> and <em>j</em> in the communicator <code>comm</code>, the process with rank <em>i</em> sends a block of <code>sendcounts[j]</code> elements at offset <code>sdispls[j]</code> with datatype <code>sendtype</code> in <code>sendbuf</code> to the process with rank <em>j</em>, which stores the values in a block of <code>recvcounts[i]</code> elements at offset <code>rdispls[i]</code> with datatype <code>recvtype</code> in <code>recvbuf</code>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at all processes to perform the operation in place. In this case <code>sendcounts</code>, <code>sdispls</code> and <code>sendtype</code> are ignored, and the process with rank <em>i</em> sends a block of <code>recvcounts[j]</code> elements at offset <code>rdispls[j]</code> with datatype <code>recvtype</code> in <code>recvbuf</code> to the process with rank <em>j</em> for each pair of different ranks <em>i</em> and <em>j</em>.</p>
+<p><em>The in-place variant of this function is available with MPI-2.2</em>.</p>
 </dd>
 <dt><code>mpi.reduce(sendbuf, recvbuf, count, datatype, op, root, comm)</code></dt>
 <dd><p>Performs a reduce operation. Blocks of <code>count</code> elements with datatype <code>datatype</code> in <code>sendbuf</code> of all processes in the communicator <code>comm</code> are combined element-wise using the reduction operator <code>op</code>, and the result is stored in a block of <code>count</code> elements with datatype <code>datatype</code> in <code>recvbuf</code> of the process with rank <code>root</code>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at the process with rank <code>root</code> to perform the operation in place. In this case the elements of the process are read from <code>recvbuf</code>.</p>
 </dd>
 <dt><code>mpi.allreduce(sendbuf, recvbuf, count, datatype, op, comm)</code></dt>
 <dd><p>Performs a reduce-to-all operation. Blocks of <code>count</code> elements with datatype <code>datatype</code> in <code>sendbuf</code> of all processes in the communicator <code>comm</code> are combined element-wise using the reduction operator <code>op</code>, and the result is stored in a block of <code>count</code> elements with datatype <code>datatype</code> in <code>recvbuf</code> of all processes.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at all processes to perform the operation in place. In this case the elements of all processes are read from <code>recvbuf</code>.</p>
 </dd>
 <dt><code>mpi.scan(sendbuf, recvbuf, count, datatype, op, comm)</code></dt>
 <dd><p>Performs an inclusive scan operation. For each rank <em>i</em> in the communicator <code>comm</code>, blocks of <code>count</code> elements with datatype <code>datatype</code> in <code>sendbuf</code> of the processes with ranks 0 to <em>i</em> are combined element-wise using the reduction operator <code>op</code>, and the result is stored in a block of <code>count</code> elements with datatype <code>datatype</code> in <code>recvbuf</code> of the process with rank <em>i</em>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at all processes to perform the operation in place. In this case the elements of all processes are read from <code>recvbuf</code>.</p>
 </dd>
 <dt><code>mpi.exscan(sendbuf, recvbuf, count, datatype, op, comm)</code></dt>
-<dd><p>Performs an exclusive scan operation. For each rank <em>i</em> in the communicator <code>comm</code>, blocks of <code>count</code> elements with datatype <code>datatype</code> in <code>sendbuf</code> of the processes with ranks <em>0</em> to <em>i - 1</em> are combined element-wise using the reduction operator <code>op</code>, and the result is stored in a block of <code>count</code> elements with datatype <code>datatype</code> in <code>recvbuf</code> of the process with rank <em>i</em>.</p>
+<dd><p>Performs an exclusive scan operation. For each rank <em>i</em> &gt; 0 in the communicator <code>comm</code>, blocks of <code>count</code> elements with datatype <code>datatype</code> in <code>sendbuf</code> of the processes with ranks 0 to <em>i</em> - 1 are combined element-wise using the reduction operator <code>op</code>, and the result is stored in a block of <code>count</code> elements with datatype <code>datatype</code> in <code>recvbuf</code> of the process with rank <em>i</em>.</p>
+<p><code>mpi.in_place</code> may be passed as <code>sendbuf</code> at all processes to perform the operation in place. In this case the elements of all processes are read from <code>recvbuf</code>.</p>
 </dd>
 </dl>
 <h3 id="predefined-reduction-operators">Predefined reduction operators</h3>
@@ -154,6 +170,33 @@
 </tbody>
 </table>
 <h2 id="datatypes">Datatypes</h2>
+<dl>
+<dt><code>mpi.type_contiguous(count, datatype)</code></dt>
+<dd><p>Returns a new datatype constructed from a sequence of <code>count</code> elements of the given datatype.</p>
+</dd>
+<dt><code>mpi.type_vector(count, blocklength, stride, datatype)</code></dt>
+<dd><p>Returns a new datatype constructed from a sequence of <code>count</code> blocks of elements of the given datatype. <code>blocklength</code> specifies the number of elements in each block. <code>stride</code> specifies the number of elements between the first elements of consecutive blocks.</p>
+</dd>
+<dt><code>mpi.type_create_indexed_block(count, blocklength, displacements, datatype)</code></dt>
+<dd><p>Returns a new datatype constructed from a sequence of <code>count</code> blocks of elements of the given datatype. <code>blocklength</code> specifies the number of elements in each block. <code>displacements</code> specifies for each block the number of elements between the first elements of that block and of the first block.</p>
+</dd>
+<dt><code>mpi.type_indexed(count, blocklengths, displacements, datatype)</code></dt>
+<dd><p>Returns a new datatype constructed from a sequence of <code>count</code> blocks of elements of the given datatype. <code>blocklengths</code> specifies for each block the number of elements in that block. <code>displacements</code> specifies for each block the number of elements between the first elements of that block and of the first block.</p>
+</dd>
+<dt><code>mpi.type_create_struct(count, blocklengths, displacements, datatypes)</code></dt>
+<dd><p>Returns a new datatype constructed from a sequence of <code>count</code> blocks of elements. <code>blocklengths</code> specifies for each block the number of elements in that block. <code>displacements</code> specifies for each block the offset in bytes of that block relative to the start of the datatype. <code>datatypes</code> specifies for each block the datatype of the elements in that block.</p>
+</dd>
+<dt><code>mpi.type_create_resized(datatype, lb, extent)</code></dt>
+<dd><p>Returns a new datatype constructed from the given datatype with lower bound <code>lb</code> and size <code>extent</code> in bytes.</p>
+<p>This function may be used to adjust for padding at the beginning or end of a datatype.</p>
+</dd>
+<dt><code>datatype:commit()</code></dt>
+<dd><p>Commits the datatype, after which it may be used for communications.</p>
+</dd>
+<dt><code>datatype:get_extent()</code></dt>
+<dd><p>Returns the lower bound and size of the datatype in bytes.</p>
+</dd>
+</dl>
 <h3 id="predefined-datatypes">Predefined datatypes</h3>
 <table>
 <colgroup>
@@ -220,6 +263,35 @@
 <td align="left"><dl>
 <dt><code>mpi.double</code></dt>
 <dd>C type <code>double</code>
+</dd>
+</dl></td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><dl>
+<dt><code>mpi.short_int</code></dt>
+<dd>C types <code>short</code> and <code>int</code>
+</dd>
+<dt><code>mpi.int_int</code></dt>
+<dd>C types <code>int</code> and <code>int</code>
+</dd>
+<dt><code>mpi.long_int</code></dt>
+<dd>C types <code>long</code> and <code>int</code>
+</dd>
+</dl></td>
+<td align="left"><dl>
+<dt><code>mpi.float_int</code></dt>
+<dd>C types <code>float</code> and <code>int</code>
+</dd>
+<dt><code>mpi.double_int</code></dt>
+<dd>C types <code>double</code> and <code>int</code>
 </dd>
 </dl></td>
 </tr>
@@ -340,9 +412,35 @@
 </tr>
 </tbody>
 </table>
+<h2 id="process-topologies">Process topologies</h2>
+<dl>
+<dt><code>mpi.cart_create(comm, dims, periods, reorder)</code></dt>
+<dd><p>Returns a new communicator that maps the processes in <code>comm</code> to a Cartesian grid. <code>dims</code> is a sequence that specifies the number of processes for each dimension of the grid. <code>periods</code> is a sequence that specifies for each dimension whether the grid is periodic (<strong>true</strong>) or non-periodic (<strong>false</strong>) along that dimension. If <code>reorder</code> is <strong>true</strong>, the ranks of the processes in the new communicator may be reordered to optimally map the Cartesian topology onto the machine topology; if <code>reorder</code> is <strong>false</strong>, the ranks of the processes remain the same as in <code>comm</code>.</p>
+<p>If the size of the Cartesian grid is smaller than the number of processes in <code>comm</code>, the function returns <strong>nil</strong> on some processes.</p>
+</dd>
+<dt><code>mpi.cart_get(comm)</code></dt>
+<dd><p>Returns three sequences that specify for each dimension of the Cartesian grid the number of processes, whether the grid is periodic (<strong>true</strong>) or non-periodic (<strong>false</strong>) along that dimension, and the coordinate of the calling process along that dimension.</p>
+</dd>
+<dt><code>mpi.cart_coords(comm, rank)</code></dt>
+<dd><p>Returns a sequence with the Cartesian coordinates of the process with the given rank.</p>
+</dd>
+<dt><code>mpi.cart_rank(comm, coords)</code></dt>
+<dd><p>Returns the rank of the process with the given Cartesian coordinates.</p>
+</dd>
+<dt><code>mpi.cart_shift(comm, direction, disp)</code></dt>
+<dd><p>Returns the ranks of the source and destination processes in a Cartesian shift, which involves a send to the destination process in the given direction and a receive from the source process in the opposite direction. <code>direction</code> specifies the coordinate dimension along which the shift is performed. <code>disp</code> specifies the displacement of the destination process relative to the calling process, either a positive integer for an upwards shift or a negative integer for a downwards shift.</p>
+<p>If the shift to the calling process would cross a non-periodic boundary, the function returns <strong>nil</strong> inplace of a source rank; if the shift from the calling process would cross a non-periodic boundary, the function returns <strong>nil</strong> inplace of a destination rank.</p>
+</dd>
+</dl>
+<h2 id="environment">Environment</h2>
+<dl>
+<dt><code>mpi.get_version()</code></dt>
+<dd><p>Returns the major and minor number of the MPI version.</p>
+</dd>
+</dl>
 </div>
 <div class="footer">
-&copy; Copyright 2013–2014, Peter Colberg.
+&copy; Copyright 2013–2015, Peter Colberg.
 Created using <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>.
 </div>
 </body>
